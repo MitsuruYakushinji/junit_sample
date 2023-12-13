@@ -4,9 +4,29 @@ package com.example;
 //staticインポート
 import static org.assertj.core.api.Assertions.*;
 
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
+import org.junit.jupiter.params.provider.ValueSource;
 
 class CalculatorTest {
+	
+	private Calculator sut;
+	
+	// 事前処理を定義する
+	@BeforeEach
+	public void setUp() {
+		this.sut = new Calculator();
+	}
+	
+	@AfterEach
+	public void tearDown() {
+		// インスタンスの解放を必ず行う
+		this.sut = null;
+	}
+	
 
 	@Test
 	void multiplyで3と4の乗算結果を取得する() {
@@ -42,5 +62,27 @@ class CalculatorTest {
 	    // 計算結果が1.5となるか検証する
 	    assertThat(actual).isEqualTo(expected);
 	}
-
+	
+	// パラメータ化
+	@ParameterizedTest
+	// ints = {～}のようにするとパラメータはint型となる
+    // Integer.MAX_VALUEはint型の最大値である2,147,483,647で奇数
+	@ValueSource(ints = {1, 3, 5, -3, -9, Integer.MAX_VALUE})
+	public void 複数のパラメータが奇数であるかを検証する(int param) {
+		boolean actual = sut.isOdd(param);
+		boolean expected = true;
+		assertThat(actual).isEqualTo(expected);
+	}
+	
+	@ParameterizedTest
+	@CsvSource({
+		"6, 3, 2.0",
+		"5,3,1.6666666666666667",
+		"0,5,0.0"})
+	// カンマ区切りの文字列をカンマで分解し、左から順に引数にセットする
+	// 1つ目のパラメータでテストされるときxには6, yには3, expectedには2.0がセットされる
+	public void 一度に複数のパラメータを扱う(int x, int y, double expected) {
+		double actual = sut.devide(x, y);
+		assertThat(actual).isEqualTo(expected);
+	}
 }

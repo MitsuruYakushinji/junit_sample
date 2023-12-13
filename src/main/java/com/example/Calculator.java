@@ -21,5 +21,11 @@ public class Calculator {
         return x - y;
     }
     
+    /**
+     * 奇数ならtrue、偶数ならfalseを返すメソッド
+     */
+    public boolean isOdd(int x) {
+        return x % 2 != 0;
+    }
 }
 
